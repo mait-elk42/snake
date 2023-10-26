@@ -7,6 +7,7 @@
 #define down(key) key == 18 || key == 74
 #define left(key) key == 0 || key == 71
 
+
 #define u {0,(float)-STEP_SIZE}
 #define d {0,(float)STEP_SIZE}
 #define r {(float)STEP_SIZE,0}
