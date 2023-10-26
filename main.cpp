@@ -1,6 +1,6 @@
 #include<NSX/nsx_game.hpp>
 
-#define STEP_SIZE 5
+#define STEP_SIZE 10
 
 #define up(key) key == 22 || key == 73
 #define right(key) key == 3 || key == 72
