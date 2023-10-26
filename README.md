@@ -4,7 +4,7 @@ JUST BETA PROJECT OF SNAKE GAME CPP LANG
 
 HOW TO USE ?
 
-if (you have installed make in your terminal)
+if you have installed make in your terminal
 
       run command
             make 
