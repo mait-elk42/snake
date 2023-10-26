@@ -13,6 +13,7 @@
 #define l {(float)-STEP_SIZE,0}
 
 
+
 enum controll{
     up,
     right,
