@@ -240,7 +240,7 @@ int main()
     font.loadFromFile("resources/font");
     Text hint;
     hint.setFont(font);
-    hint.setString("PRESS 'p' TO RESTART...");
+    hint.setString("PRESS 'r' TO RESTART...");
     RenderWindow window = RenderWindow(VideoMode(500,500),"SNAKE", Style::Close);
     Image icon;
     icon.loadFromFile("resources/icon");
