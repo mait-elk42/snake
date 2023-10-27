@@ -1,6 +1,6 @@
 #include<NSX/nsx_game.hpp>
 
-#define STEP_SIZE 10
+#define STEP_SIZE 6
 
 #define up(key) key == 22 || key == 73
 #define right(key) key == 3 || key == 72
@@ -22,7 +22,10 @@ enum controll{
     left   
 };
 typedef struct s_snake{
+    struct s_snake *prev;
+
     RectangleShape shape;
+
     struct s_snake *next;
 } t_snake;
 
@@ -59,14 +62,14 @@ int snake_out(t_snake *snakehead ,Vector2f windowpos)
 
 int eating_myself(t_snake *head)
 {
-    t_snake *tmp = head->next;
+    t_snake *tmp = head->prev;
     Vector2f headpos = head->shape.getPosition();
     while(tmp)
     {
         Vector2f pos = tmp->shape.getPosition();
         if((headpos.x == pos.x) && (headpos.y == pos.y))
             return 1;
-        tmp = tmp->next;
+        tmp = tmp->prev;
     }
     return 0;
 }
@@ -75,18 +78,24 @@ void draw_snake(RenderWindow &window, t_snake *snakehead)
     while(snakehead)
     {
         t_snake snake = *snakehead;
+        if(!snake.prev)
+            snake.shape.setFillColor(Color::Red);
+        if(!snake.next)
+            snake.shape.setFillColor(Color::Blue);
         window.draw(snake.shape);
-        snakehead = snakehead->next;
+        snakehead = snakehead->prev;
     }
 }
-void add_snake(t_snake **currsnake)
-{
-    Vector2f currssize = (*currsnake)->shape.getSize();
-    (*currsnake)->next = new t_snake();
-    (*currsnake)->next->shape = RectangleShape(currssize);
-    (*currsnake) = (*currsnake)->next;
-}
 
+
+void add_snake(t_snake *&currsnake)
+{
+    Vector2f currssize = currsnake->shape.getSize();
+    currsnake->prev = new t_snake();
+    currsnake->prev->next = currsnake;
+    currsnake->prev->shape = RectangleShape(currssize);
+    currsnake = currsnake->prev;
+}
 
 
 void StartGame(RenderWindow &window)
@@ -118,6 +127,9 @@ void StartGame(RenderWindow &window)
     
 
     snakecurr = snakehead;
+    add_snake(snakecurr);
+    add_snake(snakecurr);
+    add_snake(snakecurr);
 
     snakehead->shape.setPosition(200,200);
     while(1)
@@ -197,7 +209,7 @@ void StartGame(RenderWindow &window)
 
                 item.shape.setPosition (randompos(window.getSize(),STEP_SIZE));
 
-                add_snake(&snakecurr);
+                add_snake(snakecurr);
             }
 
             if(snake_out(snakehead,(Vector2f)window.getSize()))
@@ -210,7 +222,7 @@ void StartGame(RenderWindow &window)
                 Vector2f currpos = snaket->shape.getPosition();
                 snaket->shape.setPosition(targpos);
                 targpos = currpos;
-                snaket = snaket->next;
+                snaket = snaket->prev;
             }
             time = 0;
         }
@@ -224,10 +236,30 @@ void StartGame(RenderWindow &window)
 
 int main()
 {
+    Font font;
+    font.loadFromFile("resources/font");
+    Text hint;
+    hint.setFont(font);
+    hint.setString("PRESS 'p' TO RESTART...");
     RenderWindow window = RenderWindow(VideoMode(500,500),"SNAKE", Style::Close);
     Image icon;
     icon.loadFromFile("resources/icon");
     window.setIcon(icon.getSize().y,icon.getSize().x,icon.getPixelsPtr());
     StartGame(window);
+    while(1)
+    {
+        Event event;
+        while(window.pollEvent(event))
+        {
+            if(event.type == Event::Closed)
+                return;
+            if(event.type == Event::KeyPressed)
+                if(event.key.code == Keyboard::Key::R)
+                    StartGame(window);
+        }
+        window.clear();
+        window.draw(hint);
+        window.display();
+    }
     
 }
