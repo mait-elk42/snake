@@ -261,5 +261,5 @@ int main()
         window.draw(hint);
         window.display();
     }
-    
+    return 0;
 }
