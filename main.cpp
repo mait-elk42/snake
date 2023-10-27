@@ -2,10 +2,16 @@
 
 #define STEP_SIZE 10
 
-#define up(key) key == 22 || key == 73
-#define right(key) key == 3 || key == 72
-#define down(key) key == 18 || key == 74
-#define left(key) key == 0 || key == 71
+#define up(key) key == 22
+#define right(key) key == 3
+#define down(key) key == 18
+#define left(key) key == 0
+
+#define up2(key) key == 73
+#define right2(key)  key == 72
+#define down2(key)  key == 74
+#define left2(key)  key == 71
+
 
 
 #define u {0,(float)-STEP_SIZE}
