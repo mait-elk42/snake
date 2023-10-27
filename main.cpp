@@ -1,6 +1,6 @@
 #include<NSX/nsx_game.hpp>
 
-#define STEP_SIZE 6
+#define STEP_SIZE 10
 
 #define up(key) key == 22 || key == 73
 #define right(key) key == 3 || key == 72
@@ -78,9 +78,9 @@ void draw_snake(RenderWindow &window, t_snake *snakehead)
     while(snakehead)
     {
         t_snake snake = *snakehead;
-        if(!snake.prev)
-            snake.shape.setFillColor(Color::Red);
-        if(!snake.next)
+        // if(!snake.prev) // LAST
+        //     snake.shape.setFillColor(Color::Red);
+        if(!snake.next) //FIRST
             snake.shape.setFillColor(Color::Blue);
         window.draw(snake.shape);
         snakehead = snakehead->prev;
@@ -115,6 +115,9 @@ void StartGame(RenderWindow &window)
     String s = " SCORE : ";
     font.loadFromFile( "resources/font" );
     score.setFont( font );
+    score.setFillColor(Color::Blue);
+    score.setOutlineThickness(2);
+    score.setOutlineColor(Color::White);
     
 
     snakehead = new t_snake();
@@ -138,7 +141,7 @@ void StartGame(RenderWindow &window)
         while(window.pollEvent(event))
         {
             if(event.type == Event::Closed)
-                return;
+                exit(0);
             if(event.type == Event::KeyPressed)
                     if(up(event.key.code))
                         ctrl = up;
@@ -187,8 +190,8 @@ void StartGame(RenderWindow &window)
         t_snake *snaketmp = snakehead;
         window.draw(item.shape);
         score.setString(s+std::to_string(len_of_snake));
-        window.draw(score);
         draw_snake(window,snakehead);
+        window.draw(score);
         window.display();
         if(time >= 1)
         {   
@@ -252,7 +255,7 @@ int main()
         while(window.pollEvent(event))
         {
             if(event.type == Event::Closed)
-                return;
+                return 0;
             if(event.type == Event::KeyPressed)
                 if(event.key.code == Keyboard::Key::R)
                     StartGame(window);
