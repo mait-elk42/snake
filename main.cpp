@@ -86,8 +86,8 @@ void draw_snake(RenderWindow &window, t_snake *snakehead)
         t_snake snake = *snakehead;
         // if(!snake.prev) // LAST
         //     snake.shape.setFillColor(Color::Red);
-        if(!snake.next) //FIRST
-            snake.shape.setFillColor(Color::Blue);
+        // if(!snake.next) //FIRST
+        //     snake.shape.setFillColor(Color::Blue);
         window.draw(snake.shape);
         snakehead = snakehead->prev;
     }
@@ -243,6 +243,237 @@ void StartGame(RenderWindow &window)
     }
 }
 
+void StartGame2p(RenderWindow &window)
+{
+    int len_of_snake = 1;
+    Clock clock;
+    float time = 0;
+    float speed = 10;
+    controll ctrl = up;
+    controll ctrl2 = up;
+    controll state = ctrl;
+    controll state2 = ctrl2;
+    Vector2f direction;
+    Vector2f direction2;
+    t_snake *snakecurr;
+    t_snake *snakecurr2;
+    t_snake *snakehead;
+    t_snake *snakehead2;
+    t_snake item;
+    Text score;
+    Font font;
+    String s = " SCORE : ";
+    font.loadFromFile( "resources/font" );
+    score.setFont( font );
+    score.setFillColor(Color::Blue);
+    score.setOutlineThickness(2);
+    score.setOutlineColor(Color::White);
+    
+
+    snakehead = new t_snake();
+    snakehead->shape = RectangleShape(Vector2f(STEP_SIZE,STEP_SIZE));
+    snakehead->shape.setFillColor(Color::Green);
+
+    snakehead2 = new t_snake();
+    snakehead2->shape = RectangleShape(Vector2f(STEP_SIZE,STEP_SIZE));
+    snakehead2->shape.setFillColor(Color::Blue);
+
+
+    item.shape = RectangleShape(Vector2f(STEP_SIZE,STEP_SIZE));
+    item.shape.setPosition(randompos(window.getSize(),STEP_SIZE));
+    
+
+    snakecurr = snakehead;
+    add_snake(snakecurr);
+    add_snake(snakecurr);
+    add_snake(snakecurr);
+
+    snakecurr2 = snakehead2;
+    add_snake(snakecurr2);
+    add_snake(snakecurr2);
+    add_snake(snakecurr2);
+
+    snakehead->shape.setPosition(200,200);
+    snakehead->shape.setPosition(400,200);
+    while(1)
+    {
+        Event event;
+        while(window.pollEvent(event))
+        {
+            if(event.type == Event::Closed)
+                exit(0);
+            if(event.type == Event::KeyPressed)
+            {
+                    if(up(event.key.code))
+                        ctrl = up;
+                    else
+                    if(right(event.key.code))
+                        ctrl = right;
+                    else 
+                    if(down(event.key.code))
+                        ctrl = down;
+                    else 
+                    if(left(event.key.code))
+                        ctrl = left;
+
+                    if(up2(event.key.code))
+                        ctrl2 = up;
+                    else
+                    if(right2(event.key.code))
+                        ctrl2 = right;
+                    else 
+                    if(down2(event.key.code))
+                        ctrl2 = down;
+                    else 
+                    if(left2(event.key.code))
+                        ctrl2 = left;
+            }
+        }
+        switch(ctrl)
+        {
+            case up:
+            if(state != down)
+            {
+                direction = u;
+                state = up;
+            }
+                break;
+            case right:
+            if(state != left)
+            {
+                direction = r;
+                state = right;
+            }
+                break;
+            case down:
+            if(state != up)
+            {
+                direction = d;
+                state = down;
+            }
+                break;
+            case left:
+            if(state != right)
+            {
+                direction = l;
+                state = left;
+            }
+                break;
+        }
+        switch(ctrl2)
+        {
+            case up:
+            if(state2 != down)
+            {
+                direction2 = u;
+                state2 = up;
+            }
+                break;
+            case right:
+            if(state2 != left)
+            {
+                direction2 = r;
+                state2 = right;
+            }
+                break;
+            case down:
+            if(state2 != up)
+            {
+                direction2 = d;
+                state2 = down;
+            }
+                break;
+            case left:
+            if(state2 != right)
+            {
+                direction2 = l;
+                state2 = left;
+            }
+                break;
+        }
+        window.clear();
+        window.draw(item.shape);
+        score.setString(s+std::to_string(len_of_snake));
+        draw_snake(window,snakehead);
+        draw_snake(window,snakehead2);
+        window.draw(score);
+        window.display();
+        if(time >= 1)
+        {   
+            t_snake *snaket = snakehead;
+            t_snake *snaket2 = snakehead;
+            Vector2f sheadpos = snaket->shape.getPosition();
+            Vector2f sheadpos2 = snaket2->shape.getPosition();
+            Vector2f foodpos = item.shape.getPosition();
+
+            if( eating_myself( snakehead ) )
+                    // return;
+                prt("YOU LOOSE , DON'T EAT YOURSELF");
+
+            if( eating_myself( snakehead2 ) )
+                    // return;
+                prt("YOU LOOSE , DON'T EAT YOURSELF");
+            
+            if((sheadpos.x == foodpos.x) && (sheadpos.y == foodpos.y))
+            {
+                len_of_snake ++;
+                speed ++;
+
+                prt("NEW LENGTH OF SNAKE IS : " << len_of_snake);
+                prt("EATING FOOD FROM POSITION :" << foodpos.x << ":" << foodpos.y );
+
+                item.shape.setPosition (randompos(window.getSize(),STEP_SIZE));
+
+                add_snake(snakecurr);
+            }
+
+            if((sheadpos2.x == foodpos.x) && (sheadpos2.y == foodpos.y))
+            {
+                len_of_snake ++;
+                speed ++;
+
+                prt("NEW LENGTH OF SNAKE IS : " << len_of_snake);
+                prt("EATING FOOD FROM POSITION :" << foodpos.x << ":" << foodpos.y );
+
+                item.shape.setPosition (randompos(window.getSize(),STEP_SIZE));
+
+                add_snake(snakecurr2);
+            }
+
+            if(snake_out(snakehead,(Vector2f)window.getSize()))
+                return;
+            if(snake_out(snakehead2,(Vector2f)window.getSize()))
+                return;
+
+            Vector2f targpos = {sheadpos.x+direction.x,sheadpos.y+direction.y};
+            while ( snaket )
+            {
+                // prt(snaket<< " : " << sheadpos.y);
+                Vector2f currpos = snaket->shape.getPosition();
+                snaket->shape.setPosition(targpos);
+                targpos = currpos;
+                snaket = snaket->prev;
+            }
+
+            Vector2f targpos2 = {sheadpos2.x+direction2.x,sheadpos2.y+direction2.y};
+            while ( snaket2 )
+            {
+                // prt(snaket<< " : " << sheadpos.y);
+                Vector2f currpos = snaket2->shape.getPosition();
+                snaket2->shape.setPosition(targpos);
+                targpos2 = currpos;
+                snaket2 = snaket2->prev;
+            }
+            time = 0;
+        }
+        if(time <= 1)
+        {
+            // prt(time);
+            time += clock.restart().asSeconds() * speed;
+        }
+    }
+}
+
 int main()
 {
     Font font;
@@ -254,7 +485,7 @@ int main()
     Image icon;
     icon.loadFromFile("resources/icon");
     window.setIcon(icon.getSize().y,icon.getSize().x,icon.getPixelsPtr());
-    StartGame(window);
+    StartGame2p(window);
     while(1)
     {
         Event event;
